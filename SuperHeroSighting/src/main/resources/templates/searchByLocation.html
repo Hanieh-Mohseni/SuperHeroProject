@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Growth - Bootstrap Theme</title>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+              integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+              crossorigin="anonymous">
+
+        <link rel="stylesheet" href="../css/bootstrap4-growth.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+
+    </head>
+    <body>
+
+        <div class="bg-dark navbar-dark text-white">
+            <div class="container">
+                <nav class="navbar px-0 navbar-expand-lg navbar-dark">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="navbar-nav">
+                            <a href="/" class="pl-md-0 p-3 text-light">Home</a>
+                            <a href="superHeroes" class="p-3 text-decoration-none text-light">Super Hero</a>
+                            <a href="organizations" class="p-3 text-decoration-none text-light">Organization</a>
+                            <a href="locations" class="p-3 text-decoration-none text-light">Location</a>
+                            <a href="sightings" class="p-3 text-decoration-none text-light">Sighting</a>
+                            <a href="powers" class="p-3 text-decoration-none text-light">Power</a>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle p-3 text-decoration-none text-light" type="button"
+                                   data-toggle="dropdown">Search
+                                    <span class="caret"></span></a>
+                                <ul style="text-align:center;background-color: #373193" class="dropdown-menu">
+                                    <li><a style="color: white" href="searchByLocation">By Location</a></li>
+                                    <li class="dropdown-divider"></li>
+                                    <li><a style="color: white" href="searchByHero">By Hero</a></li>
+                                    <li class="dropdown-divider"></li>
+                                    <li><a style="color: white" href="searchByDate">By Date</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="container py-2">
+            <h2 class="mb-3">Display Heroes For Location</h2>
+
+            <div class="row">
+                <div class="col-3 text-center m-3">
+                    <span class="h3">Select A Location</span>
+                </div>
+                <div class="col-7 text-center m-3">
+                    <form action="searchByLocation" method="POST">
+                        <div class="col-7 text-center m-3">
+                            <div class="form-group row">
+                                <label for="getLocationId" class="col-3 col-form-label">
+                                    Location Name</label>
+                                <div class="col-9">
+                                    <select id="getLocationId" name="locationId" class="form-control"
+                                            onchange="enableButton()">
+                                        <option disabled selected hidden th:value="-1">Select A
+                                            Location
+                                        </option>
+                                        <option
+                                                th:each="location : ${locations}"
+                                                th:text="${location.name} + ': ' + ${location.address}"
+                                                th:value="${location.id}">
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <button type="submit" id="searchSubmitBtn" class="btn btn-primary">Search</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!--list of heroes -->
+            <div class="row">
+                <table class="table">
+                    <thead class="thead-light" th:if="${location} != null">
+                        <tr th:text="'Chosen Location: ' + ${location.name} + ' : ' + ${location.address}"></tr>
+                    </thead>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${#lists.isEmpty(heroes)}">
+                            <td colspan="6">No Records found.</td>
+                        </tr>
+                        <tr th:each="hero : ${heroes}">
+                            <td th:text="${hero.name}">SuperHero Name</td>
+                            <td th:text="${hero.description}">SuperHero Description</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- End main body -->
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+                integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+                integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+                integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+                crossorigin="anonymous"></script>
+
+        <script>
+            function disableButton() {
+                return document.getElementById('searchSubmitBtn').disabled = true;
+            }
+
+            function enableButton() {
+                return document.getElementById('searchSubmitBtn').disabled = false;
+            }
+
+            disableButton();
+        </script>
+    </body>
+</html>

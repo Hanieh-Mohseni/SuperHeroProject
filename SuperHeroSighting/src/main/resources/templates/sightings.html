@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Growth - Bootstrap Theme</title>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css"
+              integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+              crossorigin="anonymous">
+
+
+        <link rel="stylesheet" href="../css/bootstrap4-growth.min.css">
+        <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">
+    </head>
+    <body>
+        <div class="bg-dark navbar-dark text-white">
+            <div class="container">
+                <nav class="navbar px-0 navbar-expand-lg navbar-dark">
+                    <button class="navbar-toggler" type="button" data-toggle="collapse"
+                            data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false"
+                            aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+                        <div class="navbar-nav">
+                            <a href="/" class="pl-md-0 p-3 text-light">Home</a>
+                            <a href="superHeroes" class="p-3 text-decoration-none text-light">Super Hero</a>
+                            <a href="organizations" class="p-3 text-decoration-none text-light">Organization</a>
+                            <a href="locations" class="p-3 text-decoration-none text-light">Location</a>
+                            <a href="sightings" class="p-3 text-decoration-none text-light">Sighting</a>
+                            <a href="powers" class="p-3 text-decoration-none text-light">Power</a>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle p-3 text-decoration-none text-light" type="button"
+                                   data-toggle="dropdown">Search
+                                    <span class="caret"></span></a>
+                                <ul style="text-align:center;background-color: #373193" class="dropdown-menu">
+                                    <li><a style="color: white" href="searchByLocation">By Location</a></li>
+                                    <li class="dropdown-divider"></li>
+                                    <li><a style="color: white" href="searchByHero">By Hero</a></li>
+                                    <li class="dropdown-divider"></li>
+                                    <li><a style="color: white" href="searchByDate">By Date</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+        </div>
+
+        <div class="container py-2">
+            <h2 class="mb-3">Sighting</h2>
+
+            <div class="row">
+                <div class="text-center">
+                <span class="h2" id="pop-error" th:if="${displayError}!=null"
+                      th:text="${displayError}" style="color: red; font-size: 30px;"></span>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3 text-center m-3">
+                    <span class="h3">Create Sighting</span>
+                </div>
+                <div class="col-7 text-center m-3">
+                    <form action="createSighting" method="POST" th:object="${sighting}">
+                        <div class="form-group row">
+                            <label for="heroId" class="col-3 col-form-label">
+                                Hero Name</label>
+                            <div class="col-9">
+                                <select id="heroId" name="heroId" class="form-control" onchange="enableButton()"
+                                        th:field="*{heroId}"
+                                        th:classappend="${#fields.hasErrors('heroId')} ? 'is-invalid' : '' ">
+                                    <option disabled selected hidden th:value="0">Select A Hero</option>
+                                    <option th:each="member : ${members}"
+                                            th:value="${member.id}"
+                                            th:text="${member.name}">
+                                        Member Name
+                                    </option>
+                                </select>
+                                <span class="invalid-feedback" th:errors="*{heroId}"> </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="locationId" class="col-3 col-form-label">
+                                Location Name</label>
+                            <div class="col-9">
+                                <select id="locationId" name="locationId" class="form-control"
+                                        onchange="enableButton()" th:field="*{locationId}"
+                                        th:classappend="${#fields.hasErrors('locationId')} ? 'is-invalid' : '' ">
+                                    <option disabled selected hidden th:value="0">Select A Location</option>
+                                    <option th:each="location : ${locations}"
+                                            th:text="${location.name} + ': ' + ${location.address}"
+                                            th:value="${location.id}">
+                                        Member Name
+                                    </option>
+                                </select>
+                                <span class="invalid-feedback" th:errors="*{locationId}"> </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="occurDate" class="col-3 col-form-label">
+                                Date Of Sighting</label>
+                            <div class="col-9">
+                                <input type="date" name="occurDate" id="occurDate"
+                                       class="form-control"
+                                       onchange="enableButton()" th:field="*{occurDate}"
+                                       th:classappend="${#fields.hasErrors('occurDate')} ? 'is-invalid' : '' "/>
+                                <span class="invalid-feedback" th:errors="*{occurDate}"> </span>
+                            </div>
+                        </div>
+                        <button type="submit" id="createSightingBtn" class="btn btn-primary">Create
+                            Sighting</button>
+                    </form>
+                </div>
+            </div>
+
+            <div class="row">
+                <table class="table">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Hero</th>
+                            <th>Location</th>
+                            <th>Location Address</th>
+                            <th>Date (MM/DD/YYYY)</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="displaySighting : ${sightings}">
+                            <td th:text="${displaySighting.heroName}">Sighting Hero</td>
+                            <td th:text="${displaySighting.locationName}">Sighting Location</td>
+                            <td th:text="${displaySighting.locationAddress}">Sighting Location</td>
+                            <td th:text="${#temporals.format(displaySighting.occurDate, 'MM/dd/yyyy')}">Sighting
+                                Date
+                            </td>
+                            <td><a href="#" th:href="@{/editSighting(id=${displaySighting.getId()})}">Edit</a></td>
+                            <td><a href="#" th:href="@{/deleteSighting(id=${displaySighting.getId()})}">Delete</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <!-- End main body -->
+        <script>
+
+
+            function disableButton() {
+                document.getElementById('createSightingBtn').disabled = true;
+            }
+
+            function enableButton() {
+                let hName = document.getElementById("heroId").value;
+                let lName = document.getElementById("locationId").value;
+                let date = document.getElementById("occurDate").value;
+
+                if (hName !== "0" && lName !== "0" && date !== "") {
+                    document.getElementById('createSightingBtn').disabled = false;
+                }
+            }
+
+            function setMax() {
+                let date = new Date();
+                let dispDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+                document.getElementById('occurDate').setAttribute('max', dispDate)
+            }
+
+            setMax();
+            disableButton();
+            enableButton()
+        </script>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+                integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+                crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+                integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+                integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+                crossorigin="anonymous"></script>
+    </body>
+</html>
